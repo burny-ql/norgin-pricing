@@ -1,1 +1,1 @@
-# norgin-pricing
+# norgin-AI-pricing
