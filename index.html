@@ -228,6 +228,16 @@
   .model-price-value.inquire { font-size: 13px; color: var(--text-secondary); font-weight: 400; }
 
   .model-caps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+
+  /* MODEL NOTE (card footer note) */
+  .model-note { display: flex; gap: 6px; align-items: flex-start; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .model-note .note-icon { width: 13px; height: 13px; flex-shrink: 0; color: var(--text-muted); margin-top: 2px; }
+  .model-note span { flex: 1; }
+
+  /* LIST NOTE TIP (small ⓘ icon next to model name) */
+  .list-note-tip { display: inline-flex; align-items: center; vertical-align: middle; cursor: help; color: var(--text-muted); transition: color .15s; }
+  .list-note-tip:hover { color: var(--blue-bright); }
+  .list-note-tip svg { width: 12px; height: 12px; }
   .cap-badge { display: flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 4px; }
   .cap-on { background: rgba(16,199,132,0.08); color: var(--green); border: 1px solid rgba(16,199,132,0.2); }
   .cap-off { background: var(--bg-card2); color: var(--text-muted); border: 1px solid transparent; }
@@ -236,10 +246,32 @@
   .copy-btn { position: absolute; top: 12px; right: 12px; opacity: 0; background: var(--bg-card3); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 11px; color: var(--text-secondary); cursor: pointer; font-family: inherit; transition: opacity .2s; }
   .model-card:hover .copy-btn { opacity: 1; }
 
+  /* PACKAGE PRICING BLOCK (in card) */
+  .pkg-block { margin: 12px 0 4px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .pkg-tabs { display: flex; gap: 4px; margin-bottom: 12px; background: var(--bg-card2); padding: 3px; border-radius: 8px; }
+  .pkg-tab { flex: 1; padding: 5px 8px; border: none; background: none; cursor: pointer; font-family: inherit; font-size: 11px; color: var(--text-secondary); border-radius: 5px; transition: all .15s; }
+  .pkg-tab:hover:not(.active) { color: var(--text-primary); }
+  .pkg-tab.active { background: var(--bg-card); color: var(--blue-bright); font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+  .pkg-prices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pkg-price-col { background: var(--bg-card2); border-radius: 8px; padding: 10px 12px; }
+  .pkg-price-col.single { grid-column: span 2; }
+  .pkg-price-col .pkg-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .pkg-price-col .pkg-price-now { font-size: 18px; font-weight: 600; color: var(--text-primary); transition: color .15s; }
+  .pkg-price-col .pkg-price-original { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-decoration: line-through; opacity: 0; height: 0; transition: opacity .15s; }
+  .pkg-price-col .pkg-price-original.visible { opacity: 1; height: auto; margin-top: 3px; }
+
+  /* LIST VIEW PACKAGE CELL (compact tab + 2-col prices) */
+  .list-pkg-cell { display: flex; flex-direction: column; gap: 6px; grid-column: span 2; }
+  .list-pkg-tabs { display: flex; gap: 3px; background: var(--bg-card2); padding: 2px; border-radius: 6px; width: fit-content; }
+  .list-pkg-tab { padding: 3px 8px; border: none; background: none; cursor: pointer; font-family: inherit; font-size: 10px; color: var(--text-secondary); border-radius: 4px; transition: all .15s; white-space: nowrap; }
+  .list-pkg-tab.active { background: var(--bg-card); color: var(--blue-bright); font-weight: 500; }
+  .list-pkg-prices { display: flex; gap: 16px; }
+  .list-pkg-price { display: flex; align-items: baseline; gap: 4px; }
+  .list-pkg-price .lbl { font-size: 10px; color: var(--text-muted); }
+  .list-pkg-price .val { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+  /* legacy alias for old code paths */
   .package-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 10px 0; padding-top: 12px; border-top: 1px solid var(--border); }
-  .pkg-item { text-align: center; }
-  .pkg-label { font-size: 10px; color: var(--text-muted); }
-  .pkg-price { font-size: 13px; font-weight: 600; color: var(--blue-bright); }
 
   /* ============ COMPUTE PAGE ============ */
   .compute-billing-toggle { display: flex; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; gap: 4px; width: fit-content; margin-bottom: 32px; }
@@ -740,47 +772,63 @@ function toggleTheme() {
 const MODELS = [
   // LLM (大语言模型) - 6 models
   { name:'Qwen3-235B', version:'qwen3-235b-a22b', category:'llm', contextLength:'128K', marketingTag:'flagship',
-    inputPrice:2, outputPrice:8, fc:true, structured:true, search:false, batch:false, finetune:false, pkg:[100,500,1000] },
+    inputPrice:2, outputPrice:8, fc:true, structured:true, search:false, batch:false, finetune:false,
+    pkg:{ input:[100,500,1000], output:[400,2000,4000] } },
   { name:'MiniMax-M2.5', version:'MiniMax-M2.5', category:'llm', contextLength:'256K', marketingTag:'premium',
-    inputPrice:2.1, outputPrice:8.4, fc:true, structured:true, search:false, batch:false, finetune:false, pkg:[105,525,1050] },
-  { name:'DeepSeek-V3.1', version:'deepseek-v3.1-w8a8', category:'llm', contextLength:'128K', marketingTag:'highperf',
-    inputPrice:4, outputPrice:12, fc:true, structured:true, search:false, batch:true, finetune:false, pkg:[200,1000,2000] },
+    inputPrice:2.1, outputPrice:8.4, fc:true, structured:true, search:false, batch:false, finetune:false,
+    pkg:{ input:[105,525,1050], output:[420,2100,4200] } },
+  { name:'DeepSeek-V3.1', version:'deepseek-v3.1', category:'llm', contextLength:'128K', marketingTag:'highperf',
+    inputPrice:4, outputPrice:12, fc:true, structured:true, search:false, batch:false, finetune:false,
+    pkg:{ input:[200,1000,2000], output:[600,3000,6000] } },
   { name:'qwen3-32b', version:'qwen3-32b', category:'llm', contextLength:'128K', marketingTag:'balanced',
-    inputPrice:2, outputPrice:8, fc:true, structured:true, search:false, batch:false, finetune:true, pkg:[100,500,1000] },
+    inputPrice:2, outputPrice:8, fc:true, structured:true, search:false, batch:false, finetune:true,
+    pkg:{ input:[100,500,1000], output:[400,2000,4000] } },
   { name:'qwen3-8b', version:'qwen3-8b', category:'llm', contextLength:'128K', marketingTag:'fast',
-    inputPrice:0.5, outputPrice:2, fc:true, structured:true, search:false, batch:false, finetune:true, pkg:[25,125,250] },
+    inputPrice:0.5, outputPrice:2, fc:true, structured:true, search:false, batch:false, finetune:true,
+    pkg:{ input:[25,125,250], output:[100,500,1000] } },
   { name:'qwen3.5-9b', version:'Qwen/Qwen3.5-9B', category:'llm', contextLength:'128K', marketingTag:'eco',
-    inputPrice:1.5, outputPrice:12, fc:true, structured:true, search:false, batch:false, finetune:false, pkg:[75,375,750] },
+    inputPrice:1.5, outputPrice:12, fc:true, structured:true, search:false, batch:false, finetune:false,
+    pkg:{ input:[75,375,750], output:[600,3000,6000] } },
 
   // Reasoning (推理模型) - 1 model
   { name:'Qwen3-Next-80B', version:'qwen3-next-80b-a3b-thinking', category:'reasoning', contextLength:'256K', marketingTag:'premium',
-    inputPrice:1, outputPrice:10, fc:true, structured:false, search:false, batch:false, finetune:false, pkg:[50,250,500], tag:'思维链' },
+    inputPrice:1, outputPrice:10, fc:true, structured:false, search:false, batch:false, finetune:false,
+    pkg:{ input:[50,250,500], output:[500,2500,5000] }, tag:'思维链' },
 
   // VL (多模态与视觉) - 4 models
   { name:'Qwen3.5-35B-A3B', version:'qwen3.5-35b-a3b', category:'vl', contextLength:'128K', marketingTag:'balanced',
-    inputPrice:0.4, outputPrice:3.2, fc:true, structured:true, search:true, batch:false, finetune:false, pkg:[20,100,200], tag:'联网搜索' },
+    inputPrice:0.4, outputPrice:3.2, fc:true, structured:true, search:true, batch:false, finetune:false,
+    pkg:{ input:[20,100,200], output:[160,800,1600] }, tag:'联网搜索' },
   { name:'Qwen3-VL-32B', version:'Qwen3-VL-32B-Instruct', category:'vl', contextLength:'128K', marketingTag:'balanced',
-    inputPrice:2, outputPrice:8, fc:true, structured:true, search:false, batch:false, finetune:false, pkg:[100,500,1000], inputNote:'文本/视频/图片' },
+    inputPrice:2, outputPrice:8, fc:true, structured:true, search:false, batch:false, finetune:false,
+    pkg:{ input:[100,500,1000], output:[400,2000,4000] }, inputNote:'文本/视频/图片' },
   { name:'Qwen2.5-VL-72B', version:'Qwen2.5-VL-72B-Instruct', category:'vl', contextLength:'128K', marketingTag:'flagship',
-    inputPrice:16, outputPrice:48, fc:false, structured:true, search:false, batch:false, finetune:false, pkg:[800,4000,8000], inputNote:'文本/视频/图片' },
+    inputPrice:16, outputPrice:48, fc:false, structured:true, search:false, batch:false, finetune:true,
+    pkg:{ input:[800,4000,8000], output:[2400,12000,24000] }, inputNote:'文本/视频/图片' },
   { name:'Qwen3-VL-8B', version:'Qwen3-VL-8B-Instruct', category:'vl', contextLength:'128K', marketingTag:'fast',
-    inputPrice:0.5, outputPrice:2, fc:true, structured:true, search:false, batch:false, finetune:false, pkg:[25,125,250], inputNote:'文本/视频/图片' },
+    inputPrice:0.5, outputPrice:2, fc:true, structured:true, search:false, batch:false, finetune:true,
+    pkg:{ input:[25,125,250], output:[100,500,1000] }, inputNote:'文本/视频/图片' },
 
   // Embedding (向量模型) - 2 models
   { name:'qwen3-embedding-8b', version:'text-embedding-v4', category:'embedding', contextLength:'8K', marketingTag:'eco',
-    inputPrice:0.5, outputPrice:null, fc:false, structured:false, search:false, batch:true, finetune:false, pkg:[25,125,250] },
+    inputPrice:0.5, outputPrice:null, fc:false, structured:false, search:false, batch:true, finetune:false,
+    pkg:{ input:[25,125,250], output:null } },
   { name:'BGE-M3', version:'BGE-M3', category:'embedding', contextLength:'8K', marketingTag:null,
-    inputPrice:null, outputPrice:null, fc:false, structured:false, search:false, batch:false, finetune:false, pkg:null },
+    inputPrice:null, outputPrice:null, fc:false, structured:false, search:false, batch:false, finetune:false,
+    pkg:null, note:'MIT 开源，免费使用；自部署算力成本另计' },
 
   // Vision (图像处理) - 2 models
   { name:'SAM 3', version:'SAM 3', category:'vision', contextLength:'—', marketingTag:'new',
-    inputPrice:null, outputPrice:null, fc:false, structured:false, search:false, batch:false, finetune:false, pkg:null },
+    inputPrice:null, outputPrice:null, fc:false, structured:false, search:false, batch:true, finetune:true,
+    pkg:null, note:'官方开源发布，未提供托管 API 单价；自部署算力成本另计' },
   { name:'DINOv3', version:'DINOv3', category:'vision', contextLength:'—', marketingTag:'new',
-    inputPrice:null, outputPrice:null, fc:false, structured:false, search:false, batch:false, finetune:false, pkg:null },
+    inputPrice:null, outputPrice:null, fc:false, structured:false, search:false, batch:false, finetune:false,
+    pkg:null, note:'官方发布权重，未提供按 Token / API 单价；自部署算力成本另计' },
 
   // Video (视频生成) - 1 model
   { name:'wan2.2 系列', version:'wan2.2-i2v / wan2.2-s2v', category:'video', contextLength:'—', marketingTag:'new',
-    inputPrice:null, outputPrice:'0.10元/秒起', fc:false, structured:false, search:false, batch:false, finetune:false, pkg:null },
+    inputPrice:null, outputPrice:'0.10元/秒起', fc:false, structured:false, search:false, batch:false, finetune:false,
+    pkg:null, note:'文生图 0.14 元/张起；图/首尾帧生视频 0.10 元/秒起；文生视频 0.14 元/秒起' },
 ];
 
 const CATEGORIES = [
@@ -938,11 +986,30 @@ function buildPriceHTML(m, mode) {
       <div class="model-price-item"><div class="model-price-label">输出</div><div class="model-price-value">${out}<span class="model-price-unit">${typeof m.outputPrice==='number' ? ' 元/百万 Token' : ''}</span></div></div>
     </div>`;
   }
-  if (m.pkg) {
-    return `<div class="package-row">
-      <div class="pkg-item"><div class="pkg-label">1 亿包</div><div class="pkg-price">¥${m.pkg[0]}</div></div>
-      <div class="pkg-item"><div class="pkg-label">5 亿包</div><div class="pkg-price">¥${m.pkg[1]}</div></div>
-      <div class="pkg-item"><div class="pkg-label">10 亿包</div><div class="pkg-price">¥${m.pkg[2]}</div></div>
+  if (m.pkg && m.pkg.input) {
+    const hasOutput = m.pkg.output !== null && m.pkg.output !== undefined;
+    const inputData = m.pkg.input.join(',');
+    const outputData = hasOutput ? m.pkg.output.join(',') : '';
+    const outputCol = hasOutput
+      ? `<div class="pkg-price-col">
+           <div class="pkg-label">输出</div>
+           <div class="pkg-price-now" data-prices="${outputData}">¥${m.pkg.output[0]}</div>
+         </div>`
+      : '';
+    const inputColClass = hasOutput ? '' : 'single';
+    return `<div class="pkg-block">
+      <div class="pkg-tabs">
+        <button type="button" class="pkg-tab active" data-idx="0" onclick="selectPkgTab(this)">1 亿包</button>
+        <button type="button" class="pkg-tab" data-idx="1" onclick="selectPkgTab(this)">5 亿包</button>
+        <button type="button" class="pkg-tab" data-idx="2" onclick="selectPkgTab(this)">10 亿包</button>
+      </div>
+      <div class="pkg-prices">
+        <div class="pkg-price-col ${inputColClass}">
+          <div class="pkg-label">输入</div>
+          <div class="pkg-price-now" data-prices="${inputData}">¥${m.pkg.input[0]}</div>
+        </div>
+        ${outputCol}
+      </div>
     </div>`;
   }
   return `<div class="model-pricing" style="grid-template-columns:1fr"><div class="model-price-item"><div class="model-price-label">流量包</div><div class="model-price-value inquire">暂无，联系商务</div></div></div>`;
@@ -976,6 +1043,7 @@ function renderModels() {
       const extraTag = m.tag ? `<span class="model-type-badge type-multi" style="display:inline-block;">${m.tag}</span>` : '';
       const mkt = m.marketingTag ? getMktTag(m.marketingTag) : null;
       const mktBadge = mkt ? `<span class="mkt-tag mkt-${m.marketingTag}">${mkt.cn}</span>` : '';
+      const noteBlock = m.note ? `<div class="model-note"><svg class="note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>${m.note}</span></div>` : '';
       return `<div class="model-card">
         <button class="copy-btn" onclick="copyVersion('${m.version}',this)">复制 ID</button>
         <div class="model-card-header">
@@ -992,6 +1060,7 @@ function renderModels() {
         </div>
         ${priceHTML}
         <div class="model-caps">${caps}</div>
+        ${noteBlock}
       </div>`;
     }).join('');
     list.innerHTML='';
@@ -1008,9 +1077,24 @@ function renderModels() {
         priceCells = `<div class="list-cell-price">${inp}<span class="list-cell-price-unit">元/M Token</span></div>
                       <div class="list-cell-price">${out}<span class="list-cell-price-unit">${typeof m.outputPrice==='number' ? '元/M Token' : ''}</span></div>`;
       } else {
-        if (m.pkg) {
-          priceCells = `<div class="list-cell-price">¥${m.pkg[0]}<span class="list-cell-price-unit">1亿包</span></div>
-                        <div class="list-cell-price">¥${m.pkg[2]}<span class="list-cell-price-unit">10亿包</span></div>`;
+        if (m.pkg && m.pkg.input) {
+          const hasOutput = m.pkg.output !== null && m.pkg.output !== undefined;
+          const inputData = m.pkg.input.join(',');
+          const outputData = hasOutput ? m.pkg.output.join(',') : '';
+          const outputPart = hasOutput
+            ? `<div class="list-pkg-price"><span class="lbl">输出</span><span class="val" data-prices="${outputData}">¥${m.pkg.output[0]}</span></div>`
+            : '';
+          priceCells = `<div class="list-pkg-cell">
+            <div class="list-pkg-tabs">
+              <button type="button" class="list-pkg-tab active" data-idx="0" onclick="selectPkgTab(this)">1 亿</button>
+              <button type="button" class="list-pkg-tab" data-idx="1" onclick="selectPkgTab(this)">5 亿</button>
+              <button type="button" class="list-pkg-tab" data-idx="2" onclick="selectPkgTab(this)">10 亿</button>
+            </div>
+            <div class="list-pkg-prices">
+              <div class="list-pkg-price"><span class="lbl">输入</span><span class="val" data-prices="${inputData}">¥${m.pkg.input[0]}</span></div>
+              ${outputPart}
+            </div>
+          </div>`;
         } else {
           priceCells = `<div class="list-cell-price inquire" style="grid-column:span 2">流量包暂无</div>`;
         }
@@ -1024,9 +1108,10 @@ function renderModels() {
       ].filter(c => c.on).map(c => `<span class="list-cap-mini" title="${c.id}">${c.label}</span>`).join('');
       const mkt = m.marketingTag ? getMktTag(m.marketingTag) : null;
       const mktCell = mkt ? `<span class="mkt-tag mkt-${m.marketingTag}">${mkt.cn}</span>` : '<span style="color:var(--text-muted);font-size:11px">—</span>';
+      const noteTip = m.note ? `<span class="list-note-tip" title="${m.note.replace(/"/g,'&quot;')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>` : '';
       return `<div class="list-row">
         <div class="list-cell-model">
-          <div class="list-name">${m.name}</div>
+          <div class="list-name">${m.name} ${noteTip}</div>
           <div class="list-version">${m.version}</div>
         </div>
         <div><span class="model-type-badge ${CATEGORY_BADGE[m.category]}">${CATEGORY_LABEL[m.category]}</span></div>
@@ -1053,6 +1138,19 @@ function renderModels() {
     `;
     grid.innerHTML='';
   }
+}
+
+function selectPkgTab(btn) {
+  const block = btn.closest('.pkg-block, .list-pkg-cell');
+  if (!block) return;
+  const idx = parseInt(btn.dataset.idx, 10);
+  block.querySelectorAll('.pkg-tab, .list-pkg-tab').forEach(t => {
+    t.classList.toggle('active', parseInt(t.dataset.idx, 10) === idx);
+  });
+  block.querySelectorAll('[data-prices]').forEach(el => {
+    const prices = el.dataset.prices.split(',');
+    if (prices[idx]) el.textContent = '¥' + prices[idx];
+  });
 }
 
 function copyVersion(v, btn) {
