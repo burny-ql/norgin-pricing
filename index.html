@@ -36,6 +36,9 @@
     --type-vision-color: #a78bfa;
     --type-image-color: #f87171;
     --type-video-color: #f472b6;
+    /* responsive layout */
+    --content-max: 1280px;
+    --page-pad: 40px;
   }
 
   [data-theme="light"] {
@@ -97,7 +100,7 @@
   .tab-btn:hover:not(.active) { color: var(--text-primary); }
 
   /* SECTION */
-  .section { display: none; padding: 40px; max-width: 1200px; margin: 0 auto; }
+  .section { display: none; padding: 40px var(--page-pad); max-width: var(--content-max); margin: 0 auto; }
   .section.active { display: block; }
 
   /* ============ TOKEN PAGE ============ */
@@ -375,6 +378,99 @@
 
   .models-empty { display: none; text-align: center; padding: 60px; color: var(--text-muted); font-size: 14px; }
   .models-empty.visible { display: block; }
+
+  /* ============ RESPONSIVE ============ */
+
+  /* 宽屏 ≥1600px：内容区放宽，更充分利用屏幕 */
+  @media (min-width: 1600px) {
+    :root, [data-theme="dark"], [data-theme="light"] {
+      --content-max: 1600px;
+      --page-pad: 64px;
+    }
+  }
+
+  /* 大桌面 1280-1599px：标准 */
+  @media (max-width: 1599px) and (min-width: 1280px) {
+    :root, [data-theme="dark"], [data-theme="light"] { --content-max: 1280px; --page-pad: 48px; }
+  }
+
+  /* 小桌面 / 横向平板 1024-1279px */
+  @media (max-width: 1279px) {
+    :root, [data-theme="dark"], [data-theme="light"] { --content-max: 100%; --page-pad: 32px; }
+    .topbar { padding: 0 32px; }
+    .page-header { padding: 48px 32px 32px; }
+    .tab-nav { padding: 0 32px; }
+    .page-header h1 { font-size: 32px; }
+    .compute-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* 平板竖向 768-1023px */
+  @media (max-width: 1023px) {
+    :root, [data-theme="dark"], [data-theme="light"] { --page-pad: 24px; }
+    .topbar { padding: 0 24px; }
+    .topbar-nav { display: none; }            /* 顶部导航折叠（移动端常规处理） */
+    .page-header { padding: 40px 24px 28px; }
+    .page-header h1 { font-size: 28px; }
+    .page-header p { font-size: 14px; }
+    .tab-nav { padding: 0 24px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .tab-btn { white-space: nowrap; }
+    .section { padding: 28px 24px; }
+    .models-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    .gpu-features { grid-template-columns: 1fr; }
+    .apps-grid { grid-template-columns: 1fr; }
+    .apps-stats { grid-template-columns: 1fr; }
+    .special-machine { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .cta-bar { flex-direction: column; align-items: flex-start; }
+    .cta-bar-btns { width: 100%; }
+    /* 列表视图：隐藏次要列，避免横向溢出 */
+    .list-header, .list-row {
+      grid-template-columns: minmax(160px,2fr) 90px 80px 100px minmax(120px,1.2fr) 80px;
+    }
+    .list-header > :nth-child(5), .list-row > :nth-child(5),
+    .list-header > :nth-child(7), .list-row > :nth-child(7) { display: none; }
+  }
+
+  /* 手机 ≤767px */
+  @media (max-width: 767px) {
+    :root, [data-theme="dark"], [data-theme="light"] { --page-pad: 16px; }
+    .topbar { padding: 0 16px; height: 56px; }
+    .topbar-logo { font-size: 16px; }
+    .tab-nav { top: 56px; padding: 0 16px; gap: 0; }
+    .tab-btn { padding: 14px 14px; font-size: 13px; }
+    .page-header { padding: 32px 16px 24px; }
+    .page-header h1 { font-size: 24px; }
+    .header-btns { flex-direction: column; width: 100%; }
+    .header-btns button { width: 100%; }
+    .section { padding: 24px 16px; }
+    .models-grid { grid-template-columns: 1fr; }
+    .compute-grid { grid-template-columns: 1fr; }
+    .use-cases { grid-template-columns: 1fr 1fr; }
+    .token-toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar-left, .toolbar-right { justify-content: space-between; }
+    .filter-tabs { gap: 6px; }
+    .filter-tab { padding: 6px 12px; font-size: 12px; }
+    .adv-chips { gap: 6px; }
+    .security-points { grid-template-columns: 1fr; }
+    .modal { width: 100%; max-width: 100%; max-height: 90vh; border-radius: 16px 16px 0 0; align-self: flex-end; }
+    .modal-overlay { align-items: flex-end; }
+    .modal-feature-grid { grid-template-columns: 1fr; }
+    /* 列表视图在手机上转为卡片式堆叠 */
+    .models-list { border: none; background: transparent; }
+    .list-header { display: none; }
+    .list-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      padding: 16px;
+    }
+    .list-row > :nth-child(5), .list-row > :nth-child(7) { display: block; }
+    .list-cell-model { grid-column: 1 / -1; }
+    .list-cell-action { grid-column: 1 / -1; }
+    .list-copy-btn { width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -1160,9 +1256,51 @@ function closeModal(e) {
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    // called programmatically — find the matching button by index
+    const idx = { token: 0, compute: 1, apps: 2 }[name];
+    const btns = document.querySelectorAll('.tab-btn');
+    if (btns[idx]) btns[idx].classList.add('active');
+  }
+  const sec = document.getElementById('tab-' + name);
+  if (sec) sec.classList.add('active');
 }
+
+// ---- URL STATE CONTROL (for html.to.design batch capture) ----
+// Supports: ?tab=token|compute|apps  &theme=dark|light  &view=cards|list
+//           &category=llm|reasoning|vl|vision|video|embedding|coder|ocr
+//           &billing=ondemand|package
+(function applyUrlState() {
+  const params = new URLSearchParams(window.location.search);
+
+  // theme
+  const t = params.get('theme');
+  if (t === 'light' || t === 'dark') {
+    document.documentElement.setAttribute('data-theme', t);
+  }
+
+  // tab
+  const tab = params.get('tab');
+  if (tab && ['token', 'compute', 'apps'].includes(tab)) {
+    switchTab(tab, null);
+  }
+
+  // token sub-states
+  const cat = params.get('category');
+  if (cat && CATEGORIES.some(c => c.id === cat)) {
+    currentFilter = cat;
+  }
+  const billing = params.get('billing');
+  if (billing === 'package') {
+    billingMode = 'package';
+  }
+  const view = params.get('view');
+  if (view === 'list') {
+    viewMode = 'list';
+  }
+})();
 
 // INIT
 renderFilterTabs();
@@ -1170,6 +1308,23 @@ renderAdvPanel();
 renderModels();
 renderCompute();
 renderApps();
+
+// ---- post-init: sync UI controls to URL state ----
+(function syncControlsToUrlState() {
+  // billing toggle UI
+  if (billingMode === 'package') {
+    document.getElementById('toggleWrap').classList.add('on');
+    document.getElementById('lbl-ondemand').classList.remove('active');
+    document.getElementById('lbl-package').classList.add('active');
+  }
+  // view toggle UI
+  if (viewMode === 'list') {
+    document.getElementById('viewBtnCards').classList.remove('active');
+    document.getElementById('viewBtnList').classList.add('active');
+    document.getElementById('modelsGrid').style.display = 'none';
+    document.getElementById('modelsList').style.display = '';
+  }
+})();
 </script>
 </body>
 </html>
